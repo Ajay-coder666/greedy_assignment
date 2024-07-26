@@ -1,0 +1,445 @@
+16. There are given N ropes of different lengths, we need to connect these ropes into one rope. The cost to connect two ropes is equal to sum of their lengths.
+The task is to connect the ropes with minimum cost. Given N size array arr[] contains the lengths of the ropes.
+CODE:
+import heapq
+
+class Solution:
+    def minCost(self,arr,n) :
+            
+        heapq.heapify(arr)
+        ans=0
+        while len(arr)>1:
+            
+            a = heapq.heappop(arr)
+            b = heapq.heappop(arr)
+            
+            c = a+b
+            
+            ans+=c
+            
+            heapq.heappush(arr,c)
+
+        return ans
+
+17. You are given an integer array nums. You are initially positioned at the array's first index, and each element in the array represents your maximum jump length at that position.
+Return true if you can reach the last index, or false otherwise.
+CODE:
+class Solution:
+    def canJump(self, nums: List[int]) -> bool:
+        reachable = [False for i in range(len(nums))]
+        reachable[0]=True
+
+        for i in range(len(nums)):
+            if not reachable[i]:
+                continue 
+            
+            for j in range(i+1, i+nums[i]+1):
+                if j >= len(nums):
+                    return True 
+                else:
+                    reachable[j]=True
+                
+        return reachable[len(nums)-1]   
+
+18. You are given a 0-indexed array of integers nums of length n. You are initially positioned at nums[0].
+Each element nums[i] represents the maximum length of a forward jump from index i. In other words, if you are at nums[i], you can jump to any nums[i + j] where:
+0 <= j <= nums[i] and
+i + j < n
+Return the minimum number of jumps to reach nums[n - 1]. The test cases are generated such that you can reach nums[n - 1].
+CODE:
+class Solution:
+  def jump(self, nums: List[int]) -> int:
+    ans = 0
+    end = 0
+    farthest = 0
+    for i in range(len(nums) - 1):
+      farthest = max(farthest, i + nums[i])
+      if farthest >= len(nums) - 1:
+        ans += 1
+        break
+      if i == end:      # Visited all the items on the current level
+        ans += 1        # Increment the level
+        end = farthest  # Make the queue size for the next level
+
+    return ans
+
+19. We are given two arrays that represent the arrival and departure times of trains, the task is to find the minimum number of platforms required so that no train waits.
+CODE:
+
+def findPlatform(arr, dep, n):
+    plat_needed = 1
+    result = 1
+    for i in range(n):
+        # minimum platform needed
+        plat_needed = 1
+        for j in range(n):
+            if i != j:
+                if (arr[i] >= arr[j] and dep[j] >= arr[i]):
+                    plat_needed += 1
+        result = max(result, plat_needed)
+    return result
+def main():
+    arr = [100, 300, 500]
+    dep = [900, 400, 600]
+    n = len(arr)
+    print("{}".format(
+        findPlatform(arr, dep, n)))
+if __name__ == '__main__':
+    main()
+
+20. There are n children standing in a line. Each child is assigned a rating value given in the integer array ratings.
+You are giving candies to these children subjected to the following requirements:
+Each child must have at least one candy.
+Children with a higher rating get more candies than their neighbors.
+Return the minimum number of candies you need to have to distribute the candies to the children.
+CODE:
+class Solution:
+    def candy(self, ratings: List[int]) -> int:
+        n = len(ratings)
+        dp = [1]*n
+        for i in range(1,n):
+            if ratings[i]>ratings[i-1] and dp[i]<=dp[i-1]:
+                dp[i] = dp[i-1]+1
+        for i in range(n-2,-1,-1):
+            if ratings[i]>ratings[i+1] and dp[i]<=dp[i+1]:
+                dp[i] = dp[i+1]+1
+        return sum(dp)
+
+21. Given a string S of distinct character of size N and their corresponding frequency f[ ] i.e. character S[i] has f[i] frequency.
+Your task is to build the Huffman tree print all the huffman codes in preorder traversal of the tree.
+Note: While merging if two nodes have the same value, then the node which occurs at first will be taken on the left of Binary Tree and the other one to the right, 
+otherwise Node with less value will be taken on the left of the subtree and other one to the right.
+CODE:
+#User function Template for python3
+import heapq
+class node:
+    def __init__(self, freq, symbol, left=None, right= None):
+        self.freq = freq
+        self.symbol = symbol
+        self.left = left
+        self.right = right
+        self.huff = ''
+    def __lt__(self,nxt):
+        return self.freq < nxt.freq
+def getList(ans,node, val = ''):
+    newval = val + str(node.huff)
+    if node.left:
+        getList(ans, node.left, newval)
+    if node.right:
+        getList(ans, node.right, newval)
+    
+    if not node.left and not node.right:
+        ans.append(newval)
+class Solution:
+    def huffmanCodes(self,S,f,N):
+        # Code here
+        nodes = []
+        for x in range(len(S)):
+            heapq.heappush(nodes,node(f[x],S[x]))
+        while len(nodes) > 1:
+            left = heapq.heappop(nodes)
+            right = heapq.heappop(nodes)
+            left.huff = '0'
+            right.huff = '1'
+            newnode = node(left.freq+right.freq, left.symbol+right.symbol, left, right)
+            heapq.heappush(nodes, newnode)
+        ans = []
+        getList(ans,nodes[0])
+        return ans
+
+22. Given, N Mice and N holes are placed in a straight line. Each hole can accommodate only 1 mouse. A mouse can stay at his position,
+move one step right from x to x + 1, or move one step left from x to x -1. Any of these moves consumes 1 minute.
+Write a program to assign mice to holes so that the time when the last mouse gets inside a hole is minimized.
+Note: Arrays M and H are the positions of the N mice and holes.
+CODE:
+class Solution {
+    static int assignMiceHoles(int N , int[] M , int[] H) {
+        Arrays.sort(M);
+        Arrays.sort(H);
+        
+        int maxDiff = 0;
+        
+        for(int i = 0; i < N; i++)
+        {
+            int diff = Math.abs(M[i]-H[i]);
+            if(diff > maxDiff) 
+            maxDiff = diff;
+        }
+        return maxDiff;
+    }
+};
+
+23. Given an array of size n that has the following specifications: 
+Each element in the array contains either a policeman or a thief.
+Each policeman can catch only one thief.
+A policeman cannot catch a thief who is more than K units away from the policeman.
+CODE:
+def policeThief(arr, n, k):
+	i = 0
+	l = 0
+	r = 0
+	res = 0
+	thi = []
+	pol = []
+	while i < n:
+		if arr[i] == 'P':
+			pol.append(i)
+		elif arr[i] == 'T':
+			thi.append(i)
+		i += 1
+	while l < len(thi) and r < len(pol):
+		if (abs(thi[l] - pol[r]) <= k):
+			res += 1
+			l += 1
+			r += 1
+		elif thi[l] < pol[r]:
+			l += 1
+		else:
+			r += 1
+	return res
+if __name__ == '__main__':
+	arr1 = ['P', 'T', 'T', 'P', 'T']
+	k = 2
+	n = len(arr1)
+	print(("Maximum thieves caught: {}".
+		format(policeThief(arr1, n, k))))
+
+	arr2 = ['T', 'T', 'P', 'P', 'T', 'P']
+	k = 2
+	n = len(arr2)
+	print(("Maximum thieves caught: {}".
+		format(policeThief(arr2, n, k))))
+
+	arr3 = ['P', 'T', 'P', 'T', 'T', 'P']
+	k = 3
+	n = len(arr3)
+	print(("Maximum thieves caught: {}".
+		format(policeThief(arr3, n, k))))
+
+24. There is a bag that consists of items, each item has a number 1, 0, or -1 written on it.
+You are given four non-negative integers numOnes, numZeros, numNegOnes, and k.
+The bag initially contains:
+numOnes items with 1s written on them.
+numZeroes items with 0s written on them.
+numNegOnes items with -1s written on them.
+We want to pick exactly k items among the available items. Return the maximum possible sum of numbers written on the items.
+CODE:
+class Solution:
+    def kItemsWithMaximumSum(self, numOnes: int, numZeros: int, numNegOnes: int, k: int) -> int:
+        if numOnes > k:
+            return k
+        rem = k - numOnes - numZeros
+        if rem <= 0:
+            return numOnes
+        return numOnes - rem
+
+25. Given a string s containing only three types of characters: '(', ')' and '*', return true if s is valid.
+The following rules define a valid string:
+Any left parenthesis '(' must have a corresponding right parenthesis ')'.
+Any right parenthesis ')' must have a corresponding left parenthesis '('.
+Left parenthesis '(' must go before the corresponding right parenthesis ')'.
+'*' could be treated as a single right parenthesis ')' or a single left parenthesis '(' or an empty string "".
+ CODE:
+class Solution:
+    def checkValidString(self, s: str) -> bool:
+        lmin,lmax = 0,0
+        for c in s:
+            if c == "(":
+                lmin,lmax = lmin + 1, lmax + 1
+            elif c == ")":
+                lmin,lmax = lmin - 1,lmax - 1
+            else:
+                lmin,lmax = lmin - 1,lmax + 1
+            if lmax < 0:
+                return False
+            if lmin < 0:
+                lmin = 0 
+        return lmin == 0
+
+26. Given an array coins[] of size N and a target value V, where coins[i] represents the coins of different denominations.
+You have an infinite supply of each of coins. The task is to find minimum number of coins required to make the given value V. 
+If it’s not possible to make a change, print -1.
+CODE:
+import sys
+def minCoins(coins, m, V):
+	if (V == 0):
+		return 0
+	res = sys.maxsize
+	for i in range(0, m):
+		if (coins[i] <= V):
+			sub_res = minCoins(coins, m, V-coins[i])
+			if (sub_res != sys.maxsize and sub_res + 1 < res):
+				res = sub_res + 1
+	return res
+coins = [9, 6, 5, 1]
+m = len(coins)
+V = 11
+print("Minimum coins required is",minCoins(coins, m, V))
+
+
+27. Given arrival and departure times of all trains that reach a railway station. Find the minimum number of platforms required for the railway station so that no train is kept waiting.
+Consider that all the trains arrive on the same day and leave on the same day. Arrival and departure time 
+can never be the same for a train but we can have arrival time of one train equal to departure time of the other. At any given instance of time, 
+same platform can not be used for both departure of a train and arrival of another train. In such cases, we need different platforms.
+CODE:
+class Solution:    
+    def minimumPlatform(self,n,arr,dep):
+        a = d = count = max_count = 0
+        arr.sort()
+        dep.sort()
+        while a<len(arr) and d<len(dep):
+            if arr[a]<=dep[d]:
+                a+=1
+                count+=1
+            else:
+                d+=1
+                count-=1
+            max_count = max(count,max_count)
+        return max_count
+
+28. In operating systems that use paging for memory management, page replacement algorithm is needed to decide which page needs to be replaced when the new page comes in. 
+Whenever a new page is referred and is not present in memory, the page fault occurs and Operating System replaces one of the existing pages with a newly needed page.
+Given a sequence of pages in an array pages[] of length N and memory capacity C, find the number of page faults using Least Recently Used (LRU) Algorithm. 
+Note:- Before solving this example revising the OS LRU cache mechanism is recommended.
+CODE:
+class Node{
+    public: 
+        Node* next;
+        Node* prev;
+        int val;
+        int key;
+        Node():next(NULL),prev(NULL){}
+        Node(int key, int val): val(val),key(key),next(NULL),prev(NULL){}
+};
+class LRUCache {
+    Node *head, *end;
+    unordered_map<int,Node*> m;
+    int pageFault;
+    int cap;
+    void putFront(Node* node){
+        node->next->prev = node->prev;
+        node->prev->next = node->next;
+        addNode(node);
+    }
+    void addNode(Node* node){
+        node->next = head->next;
+        node->prev = head;
+        head->next->prev = node;
+        head->next = node;
+    }
+    void deleteLast(){
+        Node* del = end->prev;
+        end->prev = del->prev;
+        del->prev->next = end;
+        m.erase(del->key);
+        delete del;
+    }
+    void printList(){
+        Node* temp = head;
+        while(temp){
+            cout<<"["<<temp->key<<","<<temp->val<<"],";
+            temp = temp->next;
+        }
+        cout<<endl;
+    }
+public:
+    LRUCache(int capacity) {
+        head = new Node(-1,-1);
+        end = new Node(-1,-1);
+        head->next = end;
+        end->prev = head;
+        m = unordered_map<int,Node*>(); 
+        cap = capacity;  
+        pageFault = 0;
+    }
+    int get(int key) {
+        if(m.find(key) == m.end()) return -1;
+        Node* temp = m[key];
+        putFront(temp);
+        return temp->val;
+    }
+    bool exist(int key){
+        return (m.find(key) != m.end());
+    }
+    
+    void put(int key, int value) {
+        if(m.find(key) != m.end()){
+            Node* temp = m[key];
+            temp->val = value;
+            putFront(temp);
+        }
+        else{
+            Node* temp = new Node(key,value);
+            m[key] = temp;
+            addNode(temp);
+            cap--;
+            if(cap < 0){
+                deleteLast();
+                cap++;
+            }
+            pageFault++;
+        }
+        return;
+    }
+    int getPageFaults(){
+        return pageFault;
+    }
+};
+class Solution{
+public:
+    int pageFaults(int N, int C, int pages[]){
+        LRUCache myLRU(C);
+        int ret = 0;
+        for(int i = 0;i<N;i++)
+            myLRU.put(pages[i],pages[i]);
+        return myLRU.getPageFaults();
+    }
+};
+
+29. Given a string S of length N consisting of ‘x’ and ‘.’. The given string represents a row of seats where ‘x’ and ‘.’ represent occupied and unoccupied seats respectively.
+The task is to minimize the total number of hops or jumps to make all the occupants sit together i.e., next to each other, without having any vacant seat between them. 
+Note: Since the count of jumps can be very large, print the answer modulo 109 + 7.
+CODE:
+def minJumps(seats):
+	position = []
+	count = 0
+	lenn = len(seats)
+	for i in range(lenn):
+		if (seats[i] == 'x'):
+			position.append(i - count)
+			count += 1
+	if (count == lenn or count == 0):
+		return 0
+	med_index = (count - 1) // 2
+	med_val = position[med_index]
+	ans = 0
+	for i in range(len(position)):
+		ans = (ans % MOD +
+			abs(position[i] - med_val)
+			% MOD) % MOD
+	return ans % MOD
+if __name__ == '__main__':
+	S = "....x..xx...x.."
+	print(minJumps(S))
+
+30. There are n gas stations along a circular route, where the amount of gas at the ith station is gas[i].
+You have a car with an unlimited gas tank and it costs cost[i] of gas to travel from the ith station to its next (i + 1)th station. 
+You begin the journey with an empty tank at one of the gas stations.
+Given two integer arrays gas and cost, return the starting gas station's index if you can travel around the circuit once in the clockwise direction, otherwise return -1.
+If there exists a solution, it is guaranteed to be unique
+CODE:
+class Solution:
+    def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int:
+        sum_cost = sum(cost)
+        sum_gas = sum(gas)
+        if sum_cost > sum_gas:
+            return -1
+        current_gas = 0
+        starting_index = 0
+        for i in range(len(gas)):
+            current_gas += gas[i] - cost[i]
+            if current_gas < 0:
+                current_gas = 0
+                starting_index = i + 1
+        return starting_index
+        
