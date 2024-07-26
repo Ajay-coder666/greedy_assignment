@@ -1,0 +1,396 @@
+1. You are given an array of integers and an integer k. Your task is to select k elements from the array such that their sum is maximized?
+CODE:
+def max_sum_k_elements(arr, k):
+    sorted_arr = sorted(arr, reverse=True)
+    max_elements = sorted_arr[:k]
+    max_sum = sum(max_elements)
+    return max_sum
+
+arr = [3, 1, 4, 1, 5, 9, 2, 6, 5]
+k = 3
+print(max_sum_k_elements(arr, k)) 
+
+# Output: 18 (9 + 6 + 5)
+
+
+2 . At a lemonade stand, each lemonade costs $5. Customers are standing in a queue to buy from you and order one at a time (in the order specified by bills).
+Each customer will only buy one lemonade and pay with either a $5, $10, or $20 bill.
+You must provide the correct change to each customer so that the net transaction is that the customer pays $5.
+Note that you do not have any change in hand at first.
+Given an integer array bills where bills[i] is the bill the ith customer pays, return true if you can provide every customer with the correct change, or false otherwise
+CODE:
+class Solution:
+    def lemonadeChange(self, bills: List[int]) -> bool:
+        if bills[0] != 5:
+            return False
+        else:
+            num_5 = 0
+            num_10 = 0
+            for i in range(len(bills)):
+                if bills[i] == 5:
+                    num_5 += 1
+                    continue
+                else:
+                    change = bills[i] - 5
+                    if change == 5:
+                        num_5 -= 1
+                        num_10 += 1
+                    else:
+                        num_5 -= 1
+                        if num_10 != 0:
+                            num_10 -= 1
+                        else:
+                            num_5 -=2
+                    if num_5 < 0 or num_10 < 0:
+                        return False
+            return True
+
+3. Geekina got stuck on an island. There is only one shop on this island and it is open on all days of the week except for Sunday. Consider following constraints:
+-> N – The maximum unit of food you can buy each day.
+-> S – Number of days you are required to survive.
+-> M – Unit of food required each day to survive.
+Currently, it’s Monday, and she needs to survive for the next S days.
+Find the minimum number of days on which you need to buy food from the shop so that she can survive the next S days, or determine that it isn’t possible to survive.
+CODE:
+import math
+def can_survive(N, S, M):
+    total_food_required = S * M
+    
+    buying_days = S - (S // 7)
+    
+    if M > N or total_food_required > buying_days * N:
+        return "No, survival is not possible."
+    
+    min_days = math.ceil(total_food_required / N)
+    
+    return f"Yes, survival is possible. Minimum days to buy food: {min_days}"
+
+N = 16  
+S = 10 
+M = 2 
+
+print(can_survive(N, S, M))
+
+4. Geek is a software engineer. He is assigned with the task of calculating average waiting time of all the processes by following shortest job first policy.
+The shortest job first (SJF) or shortest job next, is a scheduling policy that selects the waiting process with the smallest execution time to execute next.
+Given an array of integers bt of size n. Array bt denotes the burst time of each process.
+Calculate the average waiting time of all the processes and return the nearest integer which is smaller or equal to the output.
+CODE:
+#User function Template for python3
+
+class Solution:
+    def solve(self, bt):
+        bt.sort()
+        time = 0
+        ans = 0
+        for i in bt:
+            ans += time
+            time += i
+        return ans//len(bt)
+
+5. Given weights and values of n items, we need to put these items in a knapsack of capacity w to get the maximum total value in the knapsack. 
+Return a double value representing the maximum value in knapsack.
+Note: Unlike 0/1 knapsack, you are allowed to break the item here. The details of structure/class is defined in the comments above the given function.
+CODE:
+class Item:
+    def __init__(self,val,w):
+        self.value = val
+        self.weight = w
+class Solution:    
+    def fractionalknapsack(self, w,arr,n):
+        valPerUnitWeight=[[item.value/item.weight,item.value,item.weight] for item in arr]
+        valPerUnitWeight.sort(reverse=True)
+        totalVal=0
+        for i in range(n):
+            if valPerUnitWeight[i][2]<=w:
+                totalVal+=valPerUnitWeight[i][1]
+                w-=valPerUnitWeight[i][2]
+            else:
+                totalVal+=(w*(valPerUnitWeight[i][0]))
+                return totalVal
+        return totalVal
+
+6. You are assigned to put some amount of boxes onto one truck. You are given a 2D array boxTypes, where boxTypes[i] = [numberOfBoxesi, numberOfUnitsPerBoxi]:
+numberOfBoxesi is the number of boxes of type i.
+numberOfUnitsPerBoxi is the number of units in each box of the type i.
+You are also given an integer truckSize, which is the maximum number of boxes that can be put on the truck. You can choose any boxes to put on the truck as long as the number of boxes does not exceed truckSize.
+
+Return the maximum total number of units that can be put on the truck.
+
+CODE:
+class Solution:
+    def maximumUnits(self, boxTypes: List[List[int]], truckSize: int) -> int:
+        boxTypes.sort(key=lambda x:x[1],reverse = True)
+
+        p=0
+        for i, j in boxTypes:
+            if i<truckSize:
+                p+=i*j
+                truckSize-=i
+            else:
+                p+=truckSize*j
+                break
+        return p            
+        
+
+7. Given an array A[ ] of positive integers of size N, where each value represents the number of chocolates in a packet. 
+Each packet can have a variable number of chocolates. There are M students, the task is to distribute chocolate packets among M students such that :
+1. Each student gets exactly one packet.
+2. The difference between maximum number of chocolates given to a student and minimum number of chocolates given to a student is minimum.
+CODE:
+ class Solution
+{
+    public long findMinDiff (ArrayList<Integer> a, int n, int m)
+    {
+        if(a.size() == 0) {
+            return 0;
+        }
+        
+        long res = Long.MAX_VALUE;
+        Collections.sort(a);
+        for(int i=0; i<n - m + 1; i++) {
+            int minElement = a.get(i);
+            int maxElement = a.get(i + m - 1);
+            
+            res = Math.min(res, maxElement - minElement);
+           
+        }
+        
+        return res;
+    }
+}
+
+8. In a candy store, there are N different types of candies available and the prices of all the N different types of candies are provided to you.
+You are now provided with an attractive offer.
+For every candy you buy from the store and get K other candies ( all are different types ) for free.
+Now you have to answer two questions. Firstly, you have to find what is the minimum amount of money you have to spend to buy all the N different candies.
+Secondly, you have to find what is the maximum amount of money you have to spend to buy all the N different candies.
+In both the cases you must utilize the offer i.e. you buy one candy and get K other candies for free.
+CODE:
+class Solution{
+    static ArrayList<Integer> candyStore(int candies[],int N,int K){
+        // code here
+        
+        ArrayList<Integer> res=new ArrayList<>();
+        if(K==0){
+            int x=0;
+            for(int i:candies){
+                x+=i;
+            }
+            res.add(x);
+            res.add(x);
+            return res;
+        }
+        PriorityQueue<Integer> p=new PriorityQueue<>();
+        for(int i:candies){
+            p.add(i);
+        }
+        ArrayList<Integer> inc=new ArrayList<>();
+        while(p.size()>0){
+            inc.add(p.poll());
+        }
+        int i=0;
+        int j=inc.size()-1;
+        int min=0;
+        while(i<=j){
+            min+=inc.get(i);
+            j-=K;
+            i++;
+            }
+        res.add(min);
+        
+        Collections.reverse(inc);
+        int l=0;
+        int m=inc.size()-1;
+        int max=0;
+        while(l<=m){
+            max+=inc.get(l);
+            m-=K;
+            l++;
+            }
+        res.add(max);
+        return res;
+        
+    }
+}
+
+9. Assume you are an awesome parent and want to give your children some cookies. But, you should give each child at most one cookie.
+Each child i has a greed factor g[i], which is the minimum size of a cookie that the child will be content with; and each cookie j has a size s[j]. If s[j] >= g[i], 
+we can assign the cookie j to the child i, and the child i will be content. Your goal is to maximize the number of your content children and output the maximum number.
+CODE:
+class Solution:
+    def findContentChildren(self, g: List[int], s: List[int]) -> int:
+        g.sort()
+        s.sorT()
+        i, j = 0, 0
+        content_children = 0
+        
+        while i < len(g) and j < len(s):
+            if s[j] >= g[i]:
+                content_children += 1
+                i += 1
+            j += 1
+        
+        return content_children
+
+10.There is one meeting room in a firm. There are n meetings in the form of (start[i], end[i]) where start[i] is start time of meeting i and end[i] is finish time of meeting i.
+What is the maximum number of meetings that can be accommodated in the meeting room when only one meeting can be held in the meeting room at a particular time?
+Return the maximum number of meetings that can be held in the meeting room.
+CODE:
+class Solution 
+{
+   
+    public static int maxMeetings(int start[], int end[], int n)
+    {
+      PriorityQueue<Node> pq=new PriorityQueue<Node>((a,b)->a.end-b.end);
+      for(int i=0;i<n;i++){
+          pq.add(new Node(start[i],end[i]));
+      }
+      int count=1;
+      int prev=pq.poll().end;
+      while(pq.size()>0){
+          Node curr=pq.poll();
+      
+          if(curr.start>prev){
+              count++;
+              prev=curr.end;
+          }
+          
+      }
+      return count;
+    }
+    static class Node{
+        int start;
+        int end;
+        Node(int start,int end){
+            this.start=start;
+            this.end=end;
+        }
+    }
+}
+
+11. There is one meeting room in a firm. There are N meetings in the form of (S[i], F[i]) where S[i] is the start time of meeting i and F[i] is the finish time of meeting i. 
+The task is to find the maximum number of meetings that can be accommodated in the meeting room. Print all meeting numbers
+CODE:
+class meeting:
+	def __init__(self, start, end, pos):
+		self.start = start
+		self.end = end
+		self.pos = pos
+def maxMeeting(l, N):
+	ans = []
+	l.sort(key=lambda x: x.end)
+	ans.append(l[0].pos)
+	time_limit = l[0].end
+	for i in range(1, N):
+		if l[i].start > time_limit:
+			ans.append(l[i].pos)
+			time_limit = l[i].end
+	for i in ans:
+		print(i + 1, end=" ")
+	print()
+if __name__ == '__main__':
+	s = [1, 3, 0, 5, 8, 5]
+	f = [2, 4, 6, 7, 9, 9]
+	N = len(s)
+	l = []
+	for i in range(N):
+		l.append(meeting(s[i], f[i], i))
+	maxMeeting(l, N)
+
+12. Given an array of intervals intervals where intervals[i] = [starti, endi], return the minimum number of intervals you need to remove to make the rest of the intervals non-overlapping.
+CODE:
+class Solution:
+    def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int:
+        intervals.sort(key=lambda x: x[1])
+        n = len(intervals)
+        prev = 0
+        count = 1
+        for i in range(1, n):
+            if intervals[i][0] >= intervals[prev][1]:
+                prev = i
+                count += 1
+        return n - count
+
+13. You are given an array of non-overlapping intervals intervals where intervals[i] = [starti, endi] represent the start and the end of the ith interval and intervals is sorted in ascending order by starti.
+You are also given an interval newInterval = [start, end] that represents the start and end of another interval.
+Insert newInterval into intervals such that intervals is still sorted in ascending order by starti and intervals still does not have any overlapping intervals (merge overlapping intervals if necessary).
+Return intervals after the insertion
+CODE:
+class Solution:
+    def insert(self, intervals: List[List[int]], newInterval: List[int]) -> List[List[int]]:
+        if len(intervals)==0:
+            return [newInterval]
+        idx = None
+        for i in range(len(intervals)):
+            if intervals[i][0]<newInterval[0]:
+                continue
+            else:
+                idx = i
+                break
+        if idx is None:
+            intervals.append(newInterval)
+        else:
+            intervals.insert(idx, newInterval)
+        ret = []
+        for i in range(len(intervals)):
+            if len(ret)==0:
+                ret.append(intervals[i])
+                continue
+            if ret[-1][1]>=intervals[i][0]:
+                ret[-1][1] = max(ret[-1][1], intervals[i][1])
+            else:
+                ret.append(intervals[i])
+        return ret
+
+14. Given an array of intervals where intervals[i] = [starti, endi], merge all overlapping intervals, and return an array of the non-overlapping intervals that cover all the intervals in the input.
+CODE:
+class Solution:
+    def merge(self, intervals: List[List[int]]) -> List[List[int]]:
+        intervals.sort(key=lambda x: x[0])
+        merged = [intervals[0]]
+
+        for interval in intervals:
+            if merged[-1][1] < interval[0]:
+                merged.append(interval)
+            else:
+                merged[-1][1] = max(merged[-1][1], interval[1])
+
+        return merged
+
+15. Given a set of N jobs where each jobi has a deadline and profit associated with it.
+Each job takes 1 unit of time to complete and only one job can be scheduled at a time. We earn the profit associated with job if and only if the job is completed by its deadline.
+Find the number of jobs done and the maximum profit.
+Note: Jobs will be given in the form (Jobid, Deadline, Profit) associated with that Job. Deadline of the job is the time before which job needs to be completed to earn the profit.
+CODE:
+class Solution 
+{
+    private :
+    static bool  cmp(Job a, Job b){
+        return (a.profit > b.profit);
+    }
+    
+    public:
+    //Function to find the maximum profit and the number of jobs done.
+    vector<int> JobScheduling(Job arr[], int n) 
+    { 
+        // your code here
+        sort(arr, arr + n, cmp);
+        bool temp[n]={false};
+        int noOfJOb=0,maxProfit=0;
+        vector<int> result;
+        for(int i=0;i<n;i++){
+            for(int j=min(n,arr[i].dead)-1;j>=0;j--){
+                if(temp[j] == false){
+                    noOfJOb++;
+                    temp[j]=true;
+                 //  cout<<arr[j].id<<" "<<arr[j].profit<<endl;
+                    maxProfit += arr[i].profit;
+                    break;
+                }
+            }
+        }
+       
+        return {noOfJOb, maxProfit};
+    } 
+};
